@@ -5,44 +5,102 @@
         th {
             cursor: pointer;
         }
-        
-        th, td {
-            border: 2px solid black;
-        }
 
         .paginacao {
             
         }
 
         .pag_links {
-            background-color: turquoise;
+            border: solid 1px black;
             padding: 3px 8px;
             border-radius: 3px;
             cursor: pointer;
         }
 
         .pag_links_active {
-            background-color: lightcoral;
+            background-color: #55557f;
             color: white;
         }
     </style>
 
-    <a href="{{route('bookPagination')}}">Book pagination</a>
+    <div class="row my-3">
+        <div class="col-md-3 col-lg-3">
+            <a class="text-danger" href="{{route('bookPagination')}}">Book pagination</a>
+        </div>
+    </div>
+
     <input type="hidden" value="{{route('bookPaginationGetBooks')}}" id="bookPaginationGetBooks">
     <input type="hidden" id="per_page" value="5">
     <input type="hidden" id="pagina_atual" value="1">
 
-    Buscar <input type="text" id="busca" onkeyup="inputPesquisa(this)">
+    <div class="row my-2">
+        <div class="col-md-1">
+            Buscar 
+        </div>
+        <div class="col-md-3 mx-5">
+            <input class="campo_busca pastel_claro" type="text" id="busca" onkeyup="inputPesquisa(this)">
+        </div>
+
+        <div class="col-md-3">
+            mostrar
+            <select onchange="perpage_change(this)" class="campo_busca pastel_claro">
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+    </div>
 
     <br><br>
-    <table>
+    <table class="table table-striped table-dark">
         <thead>
             <tr>
-                <th onclick="ordenacao(this)" data-ordenacao="id">#</th>
-                <th onclick="ordenacao(this)" data-ordenacao="nome">Nome</th>
-                <th onclick="ordenacao(this)" data-ordenacao="ano">Ano</th>
-                <th onclick="ordenacao(this)" data-ordenacao="paginas">Páginas</th>
-                <th onclick="ordenacao(this)" data-ordenacao="created_at">Criado em</th>
+                <th onclick="ordenacao(this)" data-order="0" data-orderby="id">
+                    <div class="d-flex flex-row">
+                        #
+                        <span class="d-flex flex-row">
+                            <i class="d-none bi bi-caret-up-fill" data-dir="cima"></i>
+                            <i class="d-none bi bi-caret-down-fill" data-dir="baixo"></i>
+                        </span>
+                    </div>
+                </th>
+                <th onclick="ordenacao(this)" data-order="0" data-orderby="nome">
+                    <div class="d-flex flex-row">
+                        Nome
+                        <span class="d-flex flex-row">
+                            <i class="d-none bi bi-caret-up-fill" data-dir="cima"></i>
+                            <i class="d-none bi bi-caret-down-fill" data-dir="baixo"></i>
+                        </span>
+                    </div>
+                </th>
+                <th onclick="ordenacao(this)" data-order="0" data-orderby="ano">
+                    <div class="d-flex flex-row">
+                        Ano
+                        <span class="d-flex flex-row">
+                            <i class="d-none bi bi-caret-up-fill" data-dir="cima"></i>
+                            <i class="d-none bi bi-caret-down-fill" data-dir="baixo"></i>
+                        </span>
+                    </div>
+                </th>
+                <th onclick="ordenacao(this)" data-order="0" data-orderby="paginas">
+                    <div class="d-flex flex-row">
+                        Páginas
+                        <span class="d-flex flex-row">
+                            <i class="d-none bi bi-caret-up-fill" data-dir="cima"></i>
+                            <i class="d-none bi bi-caret-down-fill" data-dir="baixo"></i>
+                        </span>
+                    </div>
+                </th>
+                <th onclick="ordenacao(this)" data-order="0" data-orderby="created_at">
+                    <div class="d-flex flex-row">
+                        Criado em
+                        <span class="d-flex flex-row">
+                            <i class="d-none bi bi-caret-up-fill" data-dir="cima"></i>
+                            <i class="d-none bi bi-caret-down-fill" data-dir="baixo"></i>
+                        </span>
+                    </div>
+                </th>
             </tr>
         </thead>
         <tbody>
@@ -51,8 +109,8 @@
     </table>
     <br>
 
-    <div class="paginacao">
-        
+    <div class="paginacao my-2">
+        {{-- JS --}}
     </div>
     
 @endsection 

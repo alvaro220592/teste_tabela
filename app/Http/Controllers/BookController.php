@@ -25,7 +25,29 @@ class BookController extends Controller
     }
 
     public function bookPaginationGetBooks(){
-        // dd(Request::input('pagina_escolhida'));
+        
+        $ordem = 'asc';
+        $orderBy = 'id';
+        $perpage = Request::input('perpage') ? Request::input('perpage') : 5;
+
+        $ordenacao = Request::input('ordenacao');
+        if (Request::input('ordenacao')) {
+            $orderBy = $ordenacao['orderBy'];
+            switch ($ordenacao['ordem']) {
+                case -1:
+                    $ordem = 'desc';
+                    break;
+
+                case 1:
+                    $ordem = 'asc';
+                    break;
+
+                default:
+                    $ordem = 'asc';
+                    $orderBy = 'id';
+                    break;
+            }
+        }
         Paginator::currentPageResolver(function (){
             return Request::input('pagina_escolhida');
         });
@@ -38,11 +60,10 @@ class BookController extends Controller
             return $query->where('nome', 'like', "%$busca%");
         });
 
-        $ordenacao = Request::input('ordenacao');
-        $query->when($ordenacao, function($query, $ordenacao){
-            return $query->orderBy($ordenacao);
+        $query->when($ordenacao, function($query, $ordenacao) use ($orderBy, $ordem) {
+            return $query->orderBy($orderBy, $ordem);
         });
 
-        return response()->json($query->paginate(5));
+        return response()->json($query->paginate($perpage));
     }
 }

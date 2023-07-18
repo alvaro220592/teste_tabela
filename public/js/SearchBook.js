@@ -5,7 +5,8 @@ class SearchBook {
     static #campoPesquisa
     static #paginaAntiga
     static #pagina_escolhida = 1
-    static #ordenacao
+    static #ordenacao = {}
+    static #perpage
 
     static getUrlGetBooks(){
         return SearchBook.#url_getBooks
@@ -35,12 +36,23 @@ class SearchBook {
         return SearchBook.#paginaAntiga
     }
 
-    static setOrdenacao(ordenacao){
-        SearchBook.#ordenacao = ordenacao
+    static setOrdenacao(order_by, ordem){
+        SearchBook.#ordenacao = {
+            orderBy: order_by,
+            ordem: ordem
+        }
     }
 
     static getOrdenacao(){
         return SearchBook.#ordenacao
+    }
+
+    static setPerpage(perpage){
+        SearchBook.#perpage = perpage
+    }
+
+    static getPerpage(){
+        return SearchBook.#perpage
     }
 
     static async buscar(){
@@ -54,7 +66,8 @@ class SearchBook {
             body: JSON.stringify({
                 inputPesquisa: SearchBook.getCampoPesquisa(),
                 pagina_escolhida: SearchBook.getPaginaEscolhida(),
-                ordenacao: SearchBook.getOrdenacao()
+                ordenacao: SearchBook.getOrdenacao(),
+                perpage: SearchBook.getPerpage()
             })
         })
 
@@ -96,8 +109,7 @@ class SearchBook {
             
             } else if (link.label.search('Next') != -1) {
                 link.label = '>'
-                id = 'next'
-            
+                id = 'next'            
             }
 
             document.querySelector('.paginacao').innerHTML += `
@@ -136,6 +148,9 @@ function inputPesquisa(elemento){
 }
 
 function mudarPagina(elemento){
+    if (elemento.dataset.numeropagina == '...') {
+        return
+    }
     SearchBook.setPaginaEscolhida(elemento.dataset.numeropagina)
     SearchBook.buscar()
 }
@@ -151,7 +166,37 @@ function configurarPaginacao(){
 }
 
 function ordenacao(elemento){
-    SearchBook.setOrdenacao(elemento.dataset.ordenacao)
+    // Resetando para 0 todos os datasets de ordem dos outros th
+    document.querySelectorAll('th').forEach(th => {
+        if (th.dataset.orderby != elemento.dataset.orderby) {
+            th.dataset.order = 0            
+            th.querySelector('i[data-dir=baixo]').classList.add('d-none')
+            th.querySelector('i[data-dir=cima]').classList.add('d-none')
+        }
+    })
+    
+    if (elemento.dataset.order == 0) {
+        elemento.dataset.order = 1
+        elemento.querySelector('i[data-dir=baixo]').classList.add('d-none')
+        elemento.querySelector('i[data-dir=cima]').classList.remove('d-none')        
+
+    } else if (elemento.dataset.order == 1) {
+        elemento.dataset.order = -1
+        elemento.querySelector('i[data-dir=baixo]').classList.remove('d-none')
+        elemento.querySelector('i[data-dir=cima]').classList.add('d-none')
+
+    } else if (elemento.dataset.order == -1) {
+        elemento.dataset.order = 0
+        elemento.querySelector('i[data-dir=baixo]').classList.add('d-none')
+        elemento.querySelector('i[data-dir=cima]').classList.add('d-none')
+    }
+
+    SearchBook.setOrdenacao(elemento.dataset.orderby, elemento.dataset.order)
+    SearchBook.buscar()
+}
+
+function perpage_change(elemento){
+    SearchBook.setPerpage(elemento.value)
     SearchBook.buscar()
 }
 
